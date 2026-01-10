@@ -49,7 +49,6 @@ export const PipelineUI = () => {
       onConnect
     } = useStore(selector, shallow);
 
-    // Memoize nodeTypes for performance
     const memoizedNodeTypes = useMemo(() => nodeTypes, []);
 
     const getInitNodeData = (nodeID, type) => {
@@ -150,27 +149,28 @@ export const PipelineUI = () => {
         <ReactFlowProvider>
             <div ref={reactFlowWrapper} className="w-full h-full bg-dark-bg">
                 <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-                onInit={setReactFlowInstance}
-                nodeTypes={memoizedNodeTypes}
-                proOptions={proOptions}
-                snapGrid={[gridSize, gridSize]}
-                connectionLineType='smoothstep'
-                aria-label="Pipeline canvas"
-            >
-                <Background variant="dots" gap={gridSize} size={1} color="#52525b" />
-                <Controls className="!bg-dark-card/50 !border-white/10 !backdrop-blur-md" />
-                <MiniMap 
-                    className="!bg-dark-card/50 !border-white/10 !backdrop-blur-md rounded-lg overflow-hidden"
-                    nodeColor="#52525b"
-                    maskColor="rgba(9, 9, 11, 0.8)"
-                />
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={onConnect}
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                  onInit={setReactFlowInstance}
+                  nodeTypes={memoizedNodeTypes}
+                  proOptions={proOptions}
+                  snapGrid={[gridSize, gridSize]}
+                  colorMode='dark'
+                  connectionLineType='smoothstep'
+                  aria-label="Pipeline canvas"
+                >
+                  <Background variant="dots" gap={gridSize} size={1} />
+                  <Controls position="bottom-right" style={{ right: 220, bottom: 0 }}  />
+                  <MiniMap 
+                      className="!bg-dark-card/50 !border-white/10 !backdrop-blur-md rounded-lg overflow-hidden"
+                      nodeColor="#52525b"
+                      maskColor="rgba(9, 9, 11, 0.8)"
+                  />
                 </ReactFlow>
           
                 <BottomToolbar isLoading={isLoading} handleSubmit={handleSubmitFlow}  />

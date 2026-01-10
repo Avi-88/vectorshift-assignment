@@ -64,7 +64,7 @@ export const BottomToolbar = ({isLoading, handleSubmit}) => {
         <button 
           onClick={handleSubmit}
           disabled={isLoading}
-          className="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple hover:from-accent-purple hover:to-accent-pink text-white text-sm font-semibold rounded-lg shadow-glow transition-all duration-300 transform hover:scale-80 active:scale-80 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-2 focus:ring-offset-dark-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          className="px-6 py-2 bg-gradient-to-r from-accent-purple to-accent-pink hover:from-accent-pink hover:to-accent-purple text-white text-sm font-semibold rounded-lg shadow-glow transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-2 focus:ring-offset-dark-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           aria-label="Run pipeline"
         >
           {isLoading ? (

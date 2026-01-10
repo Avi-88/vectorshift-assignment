@@ -13,13 +13,11 @@ function App() {
         </div>
 
         {/* Main Layout */}
-        <div className="relative z-10 flex h-full">
-          <div className="absolute left-0 top-0 h-full z-20">
-               <PipelineToolbar />
-          </div>
-          <div className="flex-1 h-full pl-[296px]"> 
+        <div className="relative items-center z-10 w-full h-full">
+           <PipelineToolbar />
+           <div className="w-full h-full"> 
                <PipelineUI />
-          </div>
+           </div>
         </div>
       </div>
     </ErrorBoundary>

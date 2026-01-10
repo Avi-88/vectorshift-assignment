@@ -7,23 +7,23 @@ module.exports = {
     extend: {
       colors: {
         dark: {
-          bg: '#09090b',         
-          surface: '#18181b',  
-          card: 'rgba(24, 24, 27, 0.6)',
+          bg: '#050505',         
+          surface: '#121212',  
+          card: 'rgba(18, 18, 20, 0.7)',
           border: '#27272a',     
           text: '#e4e4e7',      
           'text-muted': '#a1a1aa',
         },
         accent: {
-          purple: '#c084fc',
-          pink: '#f472b6',
-          blue: '#60a5fa',
+          purple: '#440e8c',
+          pink: '#b01bcf',
+          blue: '#6366F1',
           green: '#4ade80',
         }
       },
       boxShadow: {
-        'glow': '0 0 20px -5px rgba(192, 132, 252, 0.3)',
-        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'glow': '0 0 20px -5px rgba(168, 85, 247, 0.5)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.7)',
       },
       backdropBlur: {
         'xs': '2px',

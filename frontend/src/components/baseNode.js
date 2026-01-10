@@ -7,21 +7,25 @@ import * as LucideIcons from 'lucide-react';
 const accentColors = {
   blue: { 
     bg: 'bg-accent-blue', 
-    shadow: 'shadow-[0_0_8px_rgba(96,165,250,0.5)]',
-    borderColor: '#60a5fa'
+    text: 'text-accent-blue',
+    shadow: 'shadow-[0_0_8px_rgba(99,102,241,0.5)]',
+    borderColor: '#6366F1'
   },
   purple: { 
     bg: 'bg-accent-purple', 
-    shadow: 'shadow-[0_0_8px_rgba(192,132,252,0.5)]',
-    borderColor: '#c084fc'
+    text: 'text-accent-purple',
+    shadow: 'shadow-[0_0_8px_rgba(168,85,247,0.5)]',
+    borderColor: '#A855F7'
   },
   pink: { 
     bg: 'bg-accent-pink', 
-    shadow: 'shadow-[0_0_8px_rgba(244,114,182,0.5)]',
-    borderColor: '#f472b6'
+    text: 'text-accent-pink',
+    shadow: 'shadow-[0_0_8px_rgba(236,72,153,0.5)]',
+    borderColor: '#EC4899'
   },
   green: { 
     bg: 'bg-accent-green', 
+    text: 'text-accent-green',
     shadow: 'shadow-[0_0_8px_rgba(74,222,128,0.5)]',
     borderColor: '#4ade80'
   },
@@ -262,7 +266,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="glass-node min-w-[200px]">
+    <div className="glass-node min-w-[300px] min-h-[150px] flex flex-col">
       {validatedConfig.handles && validatedConfig.handles.length > 0 ? validatedConfig.handles.map((handle, index) => {
         const handleId = handle.id.startsWith(`${id}-`) ? handle.id : `${id}-${handle.id}`;
         const totalHandles = validatedConfig.handles.length;
@@ -281,7 +285,7 @@ useEffect(() => {
               borderColor: colorConfig.borderColor,
               ...handle.style 
             }}
-            className={`!bg-black !w-2 !h-2 !border-2 ${handle.position === Position.Left ? '!-left-1' : '!-right-1'}`}
+            className={`!bg-black !w-3 !h-3 !border-2 ${handle.position === Position.Left ? '!-left-[6px]' : '!-right-[6px]'}`}
           />
         );
       }) : null}
@@ -295,36 +299,33 @@ useEffect(() => {
           style={{
             top: `${((index + 1) * 100) / (variableNames.length + 1)}%`
           }}
-          className="!bg-black !border-accent-green !w-2 !h-2 !-left-1"
+          className="!bg-black !border-accent-green !w-3 !h-3 !-left-[6px]"
         />
       ))}
 
 
-      <div className={`px-3 py-2 border-b border-white/5 bg-white/5 flex items-center gap-2`}>
-        <div className={`w-1.5 h-1.5 rounded-full ${colorConfig.bg} ${colorConfig.shadow}`} />
-        {validatedConfig.icon && (() => {
-          const IconComponent = LucideIcons[validatedConfig.icon];
-          return IconComponent ? <IconComponent className="w-3 h-3 text-dark-text-muted" /> : null;
-        })()}
-        <span className="text-white font-semibold text-xs tracking-wide">{validatedConfig.title}</span>
-        {validatedConfig.subTitle && (
-          <span className="text-dark-text-muted text-[10px] ml-auto">{validatedConfig.subTitle}</span>
-        )}
+      <div className={`px-4 py-3 rounded-t-2xl border-b border-white/5 bg-white/5 flex items-center gap-3`}>
+        <div className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm`}>
+            {validatedConfig.icon && (() => {
+            const IconComponent = LucideIcons[validatedConfig.icon];
+            return IconComponent ? <IconComponent className={`w-5 h-5 ${colorConfig.text}`} /> : null;
+            })()}
+        </div>
+  
+        <div className="flex flex-col flex-1 min-w-0">
+            <span className="text-white font-bold text-sm tracking-tight truncate">{validatedConfig.title}</span>
+            <span className="text-dark-text-muted text-[10px] font-medium truncate">
+                {validatedConfig.description || validatedConfig.subTitle || 'VectorShift Node'}
+            </span>
+        </div>
       </div>
 
 
-      {validatedConfig.description && (
-        <div className="px-3 py-1.5 border-b border-white/5">
-          <p className="text-[10px] text-dark-text-muted">{validatedConfig.description}</p>
-        </div>
-      )}
-
-
       {validatedConfig.inputFields && validatedConfig.inputFields.length > 0 && (
-        <div className="p-3 space-y-3 nodrag">
+        <div className="p-4 space-y-3 nodrag flex-1 bg-black/20">
           {validatedConfig.inputFields.map((field) => (
-            <label key={field.key} className="block space-y-1 nodrag">
-              <span className="text-dark-text-muted text-[10px] font-medium uppercase tracking-wider">
+            <label key={field.key} className="block space-y-1.5 nodrag">
+              <span className="text-dark-text-muted text-[10px] font-semibold uppercase tracking-wider ml-0.5">
                 {field.label}
                 {field.required && <span className="text-red-400 ml-1">*</span>}
               </span>
