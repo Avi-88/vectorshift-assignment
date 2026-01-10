@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Handle, Position } from 'reactflow';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Handle, Position, useReactFlow } from 'reactflow';
 import { useStore } from '../utils/store';
 import { Node } from '../schemas/nodeSchema';
 import * as LucideIcons from 'lucide-react';
@@ -27,8 +27,26 @@ const accentColors = {
   },
 };
 
+// Regex to find {{ variableName }} patterns
+const VARIABLE_PATTERN = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
+
+// Validate and sanitize JavaScript identifier
+const isValidIdentifier = (name) => {
+  // Strict validation: must start with letter, underscore, or $, followed by letters, digits, underscore, or $
+  const validPattern = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+  return validPattern.test(name) && name.length <= 50; // Limit length for security
+};
+
+// Sanitize variable name to prevent injection
+const sanitizeVariableName = (name) => {
+  // Remove any characters that aren't valid for JS identifiers
+  return name.replace(/[^a-zA-Z0-9_$]/g, '').substring(0, 50);
+};
+
 function BaseNode({ id, data, config }) {
   const { updateNodeField } = useStore();
+  const { setNodes } = useReactFlow();
+  const textareaRefs = useRef({});
   
   // Validate config
   const validatedConfig = useMemo(() => {
@@ -55,6 +73,92 @@ function BaseNode({ id, data, config }) {
     }
     return initial;
   });
+
+  const variableNames = useMemo(() => {
+    if (!validatedConfig?.inputFields) return [];
+    
+    const dynamicTextareas = validatedConfig.inputFields.filter(
+      field => field.dynamicSize && field.type === 'textarea'
+    );
+    
+    const uniqueVars = new Set();
+    
+    // Iterate over each dynamic textarea field
+    dynamicTextareas.forEach((field) => {
+      const textValue = fieldValues[field.key] || '';
+      if (!textValue) return;
+      
+      // Spread matchAll iterator to get array of matches
+      const matches = [...textValue.matchAll(VARIABLE_PATTERN)];
+      
+      // Extract variable names from each match
+      matches.forEach(match => {
+        const rawName = match[1]; // match[1] is the captured group
+        const sanitized = sanitizeVariableName(rawName);
+        if (isValidIdentifier(sanitized) && sanitized.length > 0) {
+          uniqueVars.add(sanitized);
+        }
+      });
+    });
+    
+    // Limit to maximum 10 handles for performance
+    return Array.from(uniqueVars).slice(0, 10);
+  }, [fieldValues, validatedConfig]);
+
+  // Dynamic sizing for multiple textarea fields - must be called before early return
+  // Dynamic sizing - runs when field values change
+useEffect(() => {
+  if (!validatedConfig?.inputFields) return;
+  
+  // Find all textarea fields with dynamicSize enabled
+  const dynamicTextareas = validatedConfig.inputFields.filter(
+    field => field.dynamicSize && field.type === 'textarea'
+  );
+  
+  if (dynamicTextareas.length === 0) return;
+  
+  let maxWidth = 0;
+  let totalHeight = 0;
+  const baseHeight = 80;
+  const fieldSpacing = 12;
+  
+  dynamicTextareas.forEach((field, index) => {
+    const textarea = textareaRefs.current[field.key];
+    if (!textarea) return;
+    
+    const scrollHeight = textarea.scrollHeight;
+    const minHeight = field.minHeight || 60;
+    const maxHeight = field.maxHeight || 300;
+    const calculatedHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
+    
+    const minWidth = field.minWidth || 220;
+    const maxWidthField = field.maxWidth || 400;
+    const contentWidth = Math.max(textarea.scrollWidth, minWidth);
+    const calculatedWidth = Math.min(contentWidth, maxWidthField);
+    
+    maxWidth = Math.max(maxWidth, calculatedWidth);
+    const fieldHeight = calculatedHeight + 20 + (index > 0 ? fieldSpacing : 0);
+    totalHeight += fieldHeight;
+  });
+  
+  if (maxWidth === 0) {
+    maxWidth = 220;
+    totalHeight = 60;
+  }
+  
+  setNodes((nds) =>
+    nds.map((node) => {
+      if (node.id === id) {
+        return {
+          ...node,
+          width: maxWidth,
+          height: totalHeight + baseHeight,
+        };
+      }
+      return node;
+    })
+  );
+}, [fieldValues, validatedConfig, id, setNodes]); 
 
   if (!validatedConfig) {
     return (
@@ -95,6 +199,7 @@ function BaseNode({ id, data, config }) {
       case 'textarea':
         return (
           <textarea
+            ref={(el) => textareaRefs.current[field.key] = el}
             value={value}
             onChange={(e) => handleFieldChange(field.key, e.target.value)}
             placeholder={field.placeholder}
@@ -102,6 +207,14 @@ function BaseNode({ id, data, config }) {
             rows={3}
             className="nodrag w-full px-2.5 py-1.5 bg-black/30 border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-accent-blue/50 focus:ring-1 focus:ring-accent-blue/50 transition-all resize-y min-h-[60px] font-mono leading-relaxed placeholder-white/20"
             aria-label={field.label}
+            style={{ 
+              height: 'auto',
+              overflow: 'hidden' 
+            }}
+            onInput={(e) => {
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+            }}
           />
         );
       
@@ -181,6 +294,19 @@ function BaseNode({ id, data, config }) {
           />
         );
       }) : null}
+
+{variableNames.map((varName, index) => (
+        <Handle
+          key={`${id}-${varName}`}
+          type="target"
+          position={Position.Left}
+          id={`${id}-${varName}`}
+          style={{
+            top: `${((index + 1) * 100) / (variableNames.length + 1)}%`
+          }}
+          className="!bg-black !border-accent-green !w-2 !h-2 !-left-1"
+        />
+      ))}
 
       {/* Header */}
       <div className={`px-3 py-2 border-b border-white/5 bg-white/5 flex items-center gap-2`}>

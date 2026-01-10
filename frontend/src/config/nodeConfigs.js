@@ -120,7 +120,12 @@ export const nodeConfigs = {
         label: 'Input Text',
         defaultValue: '{{input}}',
         placeholder: 'Type something here... Use {{variable}} for dynamic handles.',
-      }
+        dynamicSize: true,
+        minHeight: 60,
+        maxHeight: 300,
+        minWidth: 220,
+        maxWidth: 400,
+      },
     ]
   },
 
@@ -260,6 +265,11 @@ export const nodeConfigs = {
         defaultValue: 'SELECT * FROM table',
         placeholder: 'Enter SQL query...',
         required: true,
+        dynamicSize: true,
+        minHeight: 60,
+        maxHeight: 300,
+        minWidth: 220,
+        maxWidth: 400,
       }
     ]
   },
@@ -277,6 +287,11 @@ export const nodeConfigs = {
         label: 'Note Content',
         defaultValue: '',
         placeholder: 'Enter your note...',
+        dynamicSize: true,
+        minHeight: 60,
+        maxHeight: 300,
+        minWidth: 220,
+        maxWidth: 400,
       }
     ]
   }

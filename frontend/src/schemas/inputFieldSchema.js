@@ -16,6 +16,11 @@ export const NodeInput = z.object({
     required: z.boolean().optional(),
     disabled: z.boolean().optional(),
     style: z.record(z.string(), z.any()).optional(), // Record<string, any> for style object
+    dynamicSize: z.boolean().optional(),
+    minHeight: z.number().optional(),
+    maxHeight: z.number().optional(),
+    minWidth: z.number().optional(),
+    maxWidth: z.number().optional(),
 }).refine((data) => {
     if(data.type === "select" && !data.options){
         return false;

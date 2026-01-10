@@ -45,6 +45,7 @@ export const TextNode = ({ id, data, config }) => {
   // Update node dimensions based on textarea content
   useEffect(() => {
     if (textareaRef.current) {
+
       const textarea = textareaRef.current;
       const scrollHeight = textarea.scrollHeight;
       const minHeight = 60;
