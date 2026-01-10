@@ -7,7 +7,7 @@ export const Node = z.object({
     subTitle: z.string().optional(),
     description: z.string().optional(),
     icon: z.string().optional(),
-    handles: z.array(NodeHandle), // Allow empty arrays for nodes like Note
+    handles: z.array(NodeHandle), 
     inputFields: z.array(NodeInput).optional(),
     accentColor: z.enum(["blue", "purple", "pink", "green"]).optional(),
 })

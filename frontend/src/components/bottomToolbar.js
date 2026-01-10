@@ -4,7 +4,7 @@ import { Undo2, Redo2, Loader2} from 'lucide-react';
 
 export const BottomToolbar = ({isLoading, handleSubmit}) => {
 
-  const { undo, redo, historyIndex, historyLength, nodes, edges } = useStore(
+  const { undo, redo, historyIndex, historyLength} = useStore(
     (state) => ({
       undo: state.undo,
       redo: state.redo,

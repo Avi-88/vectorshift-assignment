@@ -17,7 +17,6 @@ const gridSize = 20;
 const proOptions = { hideAttribution: true };
 
 // Create nodeTypes mapping using BaseNode with configs
-// Text node uses special component for dynamic features
 const nodeTypes = Object.keys(nodeConfigs).reduce((nodes, type) => {
   nodes[type] = (props) => <BaseNode {...props} config={nodeConfigs[type]} />;
   return nodes;
@@ -146,18 +145,6 @@ export const PipelineUI = () => {
       setError(null);
     };
 
-
-    // const memoizedOnNodesChange = useCallback((changes) => {
-    //   onNodesChange(changes);
-    // }, [onNodesChange]);
-
-    // const memoizedOnEdgesChange = useCallback((changes) => {
-    //   onEdgesChange(changes);
-    // }, [onEdgesChange]);
-
-    // const memoizedOnConnect = useCallback((connection) => {
-    //   onConnect(connection);
-    // }, [onConnect]);
 
     return (
         <ReactFlowProvider>

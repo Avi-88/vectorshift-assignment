@@ -12,7 +12,6 @@ export const ResponseModal = ({ isOpen, onClose, response, error }) => {
         className="glass-panel rounded-2xl border border-white/10 p-6 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-glass my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">
             {error ? 'Error' : 'Pipeline Validation Result'}
@@ -26,7 +25,6 @@ export const ResponseModal = ({ isOpen, onClose, response, error }) => {
           </button>
         </div>
 
-        {/* Content */}
         {error ? (
           <div className="space-y-3">
             <p className="text-red-400 text-sm">{error}</p>
@@ -64,7 +62,6 @@ export const ResponseModal = ({ isOpen, onClose, response, error }) => {
           </div>
         ) : null}
 
-        {/* Close Button */}
         <div className="mt-6 flex justify-end">
           <button
             onClick={onClose}

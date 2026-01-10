@@ -34,12 +34,11 @@ const VARIABLE_PATTERN = /\{\{\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\}\}/g;
 const isValidIdentifier = (name) => {
   // Strict validation: must start with letter, underscore, or $, followed by letters, digits, underscore, or $
   const validPattern = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
-  return validPattern.test(name) && name.length <= 50; // Limit length for security
+  return validPattern.test(name) && name.length <= 50; 
 };
 
 // Sanitize variable name to prevent injection
 const sanitizeVariableName = (name) => {
-  // Remove any characters that aren't valid for JS identifiers
   return name.replace(/[^a-zA-Z0-9_$]/g, '').substring(0, 50);
 };
 
@@ -48,7 +47,7 @@ function BaseNode({ id, data, config }) {
   const { setNodes } = useReactFlow();
   const textareaRefs = useRef({});
   
-  // Validate config
+  // Validate config 
   const validatedConfig = useMemo(() => {
     if (!config) return null;
     const result = Node.safeParse(config);
@@ -59,7 +58,7 @@ function BaseNode({ id, data, config }) {
     return result.data;
   }, [config]);
 
-  // Initialize field state from data or defaults - must be called before early return
+ 
   const [fieldValues, setFieldValues] = useState(() => {
     if (!config) return {};
     const initial = {};
@@ -83,17 +82,14 @@ function BaseNode({ id, data, config }) {
     
     const uniqueVars = new Set();
     
-    // Iterate over each dynamic textarea field
     dynamicTextareas.forEach((field) => {
       const textValue = fieldValues[field.key] || '';
       if (!textValue) return;
       
-      // Spread matchAll iterator to get array of matches
       const matches = [...textValue.matchAll(VARIABLE_PATTERN)];
       
-      // Extract variable names from each match
       matches.forEach(match => {
-        const rawName = match[1]; // match[1] is the captured group
+        const rawName = match[1];
         const sanitized = sanitizeVariableName(rawName);
         if (isValidIdentifier(sanitized) && sanitized.length > 0) {
           uniqueVars.add(sanitized);
@@ -101,12 +97,10 @@ function BaseNode({ id, data, config }) {
       });
     });
     
-    // Limit to maximum 10 handles for performance
+    // currently limited to 10 
     return Array.from(uniqueVars).slice(0, 10);
   }, [fieldValues, validatedConfig]);
 
-  // Dynamic sizing for multiple textarea fields - must be called before early return
-  // Dynamic sizing - runs when field values change
 useEffect(() => {
   if (!validatedConfig?.inputFields) return;
   
@@ -171,13 +165,11 @@ useEffect(() => {
   const accentColor = validatedConfig.accentColor || 'blue';
   const colorConfig = accentColors[accentColor];
 
-  // Generic field change handler
   const handleFieldChange = (fieldKey, value) => {
     setFieldValues(prev => ({ ...prev, [fieldKey]: value }));
     updateNodeField(id, fieldKey, value);
   };
 
-  // Render field based on type
   const renderField = (field) => {
     const value = fieldValues[field.key] ?? '';
     const isDisabled = field.disabled || false;
@@ -271,7 +263,6 @@ useEffect(() => {
 
   return (
     <div className="glass-node min-w-[200px]">
-      {/* Render handles */}
       {validatedConfig.handles && validatedConfig.handles.length > 0 ? validatedConfig.handles.map((handle, index) => {
         const handleId = handle.id.startsWith(`${id}-`) ? handle.id : `${id}-${handle.id}`;
         const totalHandles = validatedConfig.handles.length;
@@ -295,7 +286,7 @@ useEffect(() => {
         );
       }) : null}
 
-{variableNames.map((varName, index) => (
+      {variableNames.map((varName, index) => (
         <Handle
           key={`${id}-${varName}`}
           type="target"
@@ -308,7 +299,7 @@ useEffect(() => {
         />
       ))}
 
-      {/* Header */}
+
       <div className={`px-3 py-2 border-b border-white/5 bg-white/5 flex items-center gap-2`}>
         <div className={`w-1.5 h-1.5 rounded-full ${colorConfig.bg} ${colorConfig.shadow}`} />
         {validatedConfig.icon && (() => {
@@ -321,14 +312,14 @@ useEffect(() => {
         )}
       </div>
 
-      {/* Description */}
+
       {validatedConfig.description && (
         <div className="px-3 py-1.5 border-b border-white/5">
           <p className="text-[10px] text-dark-text-muted">{validatedConfig.description}</p>
         </div>
       )}
 
-      {/* Fields */}
+
       {validatedConfig.inputFields && validatedConfig.inputFields.length > 0 && (
         <div className="p-3 space-y-3 nodrag">
           {validatedConfig.inputFields.map((field) => (

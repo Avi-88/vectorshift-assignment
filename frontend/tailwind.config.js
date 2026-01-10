@@ -7,11 +7,11 @@ module.exports = {
     extend: {
       colors: {
         dark: {
-          bg: '#09090b',         // Very deep black/gray
-          surface: '#18181b',    // Slightly lighter for panels
-          card: 'rgba(24, 24, 27, 0.6)', // Glassy card background
-          border: '#27272a',     // Subtle border
-          text: '#e4e4e7',       // High contrast text
+          bg: '#09090b',         
+          surface: '#18181b',  
+          card: 'rgba(24, 24, 27, 0.6)',
+          border: '#27272a',     
+          text: '#e4e4e7',      
           'text-muted': '#a1a1aa',
         },
         accent: {

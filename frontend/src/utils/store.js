@@ -13,12 +13,10 @@ const saveToHistory = (state, nodes, edges) => {
   const history = state.history || [];
   const historyIndex = state.historyIndex !== undefined ? state.historyIndex : -1;
   
-  // Remove any future history if we're not at the end
   const newHistory = historyIndex < history.length - 1 
     ? history.slice(0, historyIndex + 1)
     : history;
   
-  // Add new state to history (limit to 50 entries)
   const updatedHistory = [...newHistory, { nodes: JSON.parse(JSON.stringify(nodes)), edges: JSON.parse(JSON.stringify(edges)) }].slice(-50);
   
   return {
@@ -57,22 +55,16 @@ export const useStore = create((set, get) => {
     },
     onNodesChange: (changes) => {
       const currentNodes = get().nodes;
-      const currentEdges = get().edges;
       const newNodes = applyNodeChanges(changes, currentNodes);
-      const historyUpdate = saveToHistory(get(), newNodes, currentEdges);
       set({
         nodes: newNodes,
-        ...historyUpdate
       });
     },
     onEdgesChange: (changes) => {
-      const currentNodes = get().nodes;
       const currentEdges = get().edges;
       const newEdges = applyEdgeChanges(changes, currentEdges);
-      const historyUpdate = saveToHistory(get(), currentNodes, newEdges);
       set({
         edges: newEdges,
-        ...historyUpdate
       });
     },
     onConnect: (connection) => {
@@ -87,17 +79,14 @@ export const useStore = create((set, get) => {
     },
     updateNodeField: (nodeId, fieldName, fieldValue) => {
       const currentNodes = get().nodes;
-      const currentEdges = get().edges;
       const newNodes = currentNodes.map((node) => {
         if (node.id === nodeId) {
           return { ...node, data: { ...node.data, [fieldName]: fieldValue } };
         }
         return node;
       });
-      const historyUpdate = saveToHistory(get(), newNodes, currentEdges);
       set({
         nodes: newNodes,
-        ...historyUpdate
       });
     },
     undo: () => {
@@ -123,14 +112,6 @@ export const useStore = create((set, get) => {
           historyIndex: historyIndex + 1
         });
       }
-    },
-    canUndo: () => {
-      const state = get();
-      return state.historyIndex > 0;
-    },
-    canRedo: () => {
-      const state = get();
-      return state.historyIndex < (state.history?.length || 0) - 1;
-    },
+    }
   };
 });
