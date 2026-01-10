@@ -1,15 +1,17 @@
 import { useStore } from '../utils/store';
 import { shallow } from 'zustand/shallow';
-import { Undo2, Redo2} from 'lucide-react';
+import { Undo2, Redo2, Loader2} from 'lucide-react';
 
-export const BottomToolbar = ({rfInstance}) => {
+export const BottomToolbar = ({isLoading, handleSubmit}) => {
 
-  const { undo, redo, historyIndex, historyLength } = useStore(
+  const { undo, redo, historyIndex, historyLength, nodes, edges } = useStore(
     (state) => ({
       undo: state.undo,
       redo: state.redo,
       historyIndex: state.historyIndex,
       historyLength: state.history?.length || 0,
+      nodes: state.nodes,
+      edges: state.edges,
     }),
     shallow
   );
@@ -29,13 +31,6 @@ export const BottomToolbar = ({rfInstance}) => {
     }
   };
 
-  const handleSubmitFlow = async () => {
-    try {
-        console.log(JSON.stringify(rfInstance.toObject()))
-    } catch (error) {
-        console.log(error)
-    }
-}
 
   const actionButtonClass = "p-2 rounded-lg border border-white/10 text-dark-text hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-2 focus:ring-offset-dark-bg disabled:opacity-50 disabled:cursor-not-allowed";
   const iconSize = 16;
@@ -67,12 +62,17 @@ export const BottomToolbar = ({rfInstance}) => {
         <div className="h-8 w-px bg-white/10" />
 
         <button 
-          onClick={handleSubmitFlow}
-          className="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple hover:from-accent-purple hover:to-accent-pink text-white text-sm font-semibold rounded-lg shadow-glow transition-all duration-300 transform hover:scale-80 active:scale-80 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-2 focus:ring-offset-dark-bg"
+          onClick={handleSubmit}
+          disabled={isLoading}
+          className="px-6 py-2 bg-gradient-to-r from-accent-blue to-accent-purple hover:from-accent-purple hover:to-accent-pink text-white text-sm font-semibold rounded-lg shadow-glow transition-all duration-300 transform hover:scale-80 active:scale-80 flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-accent-purple focus:ring-offset-2 focus:ring-offset-dark-bg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           aria-label="Run pipeline"
         >
-          <span className="text-sm" aria-hidden="true">▶</span>
-          Submit Pipeline
+          {isLoading ? (
+            <Loader2 size={16} className="animate-spin" />
+          ) : (
+            <span className="text-sm" aria-hidden="true">▶</span>
+          )}
+          {isLoading ? 'Validating...' : 'Submit Pipeline'}
         </button>
       </div>
     </div>

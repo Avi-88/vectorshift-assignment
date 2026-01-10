@@ -8,7 +8,7 @@ import { useStore } from './utils/store';
 import { shallow } from 'zustand/shallow';
 import BaseNode from './components/baseNode';
 import { nodeConfigs } from './config/nodeConfigs';
-import { TextNode } from './config/textNode';
+import { ResponseModal } from './components/ResponseModal';
 
 import 'reactflow/dist/style.css';
 import { BottomToolbar } from './components/bottomToolbar';
@@ -36,6 +36,10 @@ const selector = (state) => ({
 export const PipelineUI = () => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [response, setResponse] = useState(null);
+    const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const {
       nodes,
       edges,
@@ -96,18 +100,64 @@ export const PipelineUI = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
-    // Memoize callbacks for performance
-    const memoizedOnNodesChange = useCallback((changes) => {
-      onNodesChange(changes);
-    }, [onNodesChange]);
+    const handleSubmitFlow = async () => {
+      setIsLoading(true);
+      setError(null);
+      setResponse(null);
+      try {
+        if(nodes.length === 0 && edges.length === 0){
+          setError('Failed to validate pipeline. Please create a workflow to begin!.');
+          setIsModalOpen(true);
+          return;
+        };
 
-    const memoizedOnEdgesChange = useCallback((changes) => {
-      onEdgesChange(changes);
-    }, [onEdgesChange]);
 
-    const memoizedOnConnect = useCallback((connection) => {
-      onConnect(connection);
-    }, [onConnect]);
+        const payload = {
+          nodes: nodes,
+          edges: edges
+        };
+  
+        const apiResponse = await fetch('http://localhost:8000/pipelines/parse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+  
+        if (!apiResponse.ok) {
+          throw new Error(`API error: ${apiResponse.status} ${apiResponse.statusText}`);
+        }
+  
+        const data = await apiResponse.json();
+        setResponse(data);
+        setIsModalOpen(true);
+      } catch (err) {
+        setError(err.message || 'Failed to validate pipeline. Please try again.');
+        setIsModalOpen(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
+      setResponse(null);
+      setError(null);
+    };
+
+
+    // const memoizedOnNodesChange = useCallback((changes) => {
+    //   onNodesChange(changes);
+    // }, [onNodesChange]);
+
+    // const memoizedOnEdgesChange = useCallback((changes) => {
+    //   onEdgesChange(changes);
+    // }, [onEdgesChange]);
+
+    // const memoizedOnConnect = useCallback((connection) => {
+    //   onConnect(connection);
+    // }, [onConnect]);
 
     return (
         <ReactFlowProvider>
@@ -117,7 +167,7 @@ export const PipelineUI = () => {
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
-                onConnect={memoizedOnConnect}
+                onConnect={onConnect}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
                 onInit={setReactFlowInstance}
@@ -136,7 +186,13 @@ export const PipelineUI = () => {
                 />
                 </ReactFlow>
           
-                <BottomToolbar rfInstance={reactFlowInstance}  />
+                <BottomToolbar isLoading={isLoading} handleSubmit={handleSubmitFlow}  />
+                <ResponseModal
+                  isOpen={isModalOpen}
+                  onClose={handleCloseModal}
+                  response={response}
+                  error={error}
+                />
             </div>
         </ReactFlowProvider>
     )

@@ -11,11 +11,11 @@ export const NodeInput = z.object({
             label: z.string()
         })
     ])).optional(),
-    defaultValue: z.any().optional(), // Can be string, number, function, or undefined
+    defaultValue: z.any().optional(), 
     placeholder: z.string().optional(),
     required: z.boolean().optional(),
     disabled: z.boolean().optional(),
-    style: z.record(z.string(), z.any()).optional(), // Record<string, any> for style object
+    style: z.record(z.string(), z.any()).optional(), 
     dynamicSize: z.boolean().optional(),
     minHeight: z.number().optional(),
     maxHeight: z.number().optional(),
