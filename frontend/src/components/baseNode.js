@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Handle, Position, useReactFlow } from 'reactflow';
+import { Handle, Position, useReactFlow, useUpdateNodeInternals } from 'reactflow';
 import { useStore } from '../utils/store';
 import { Node } from '../schemas/nodeSchema';
 import * as LucideIcons from 'lucide-react';
@@ -49,6 +49,7 @@ const sanitizeVariableName = (name) => {
 function BaseNode({ id, data, config }) {
   const { updateNodeField } = useStore();
   const { setNodes } = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
   const textareaRefs = useRef({});
   
   // Validate config 
@@ -104,6 +105,11 @@ function BaseNode({ id, data, config }) {
     // currently limited to 10 
     return Array.from(uniqueVars).slice(0, 10);
   }, [fieldValues, validatedConfig]);
+
+  // Update node internals when dynamic handles change to ensure React Flow tracks them
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, [variableNames, id, updateNodeInternals]);
 
 useEffect(() => {
   if (!validatedConfig?.inputFields) return;
@@ -296,10 +302,12 @@ useEffect(() => {
           type="target"
           position={Position.Left}
           id={`${id}-${varName}`}
+          isConnectable={true}
           style={{
-            top: `${((index + 1) * 100) / (variableNames.length + 1)}%`
+            top: `${((index + 1) * 100) / (variableNames.length + 1)}%`,
+            borderColor: accentColors.green.borderColor
           }}
-          className="!bg-black !border-accent-green !w-3 !h-3 !-left-[6px]"
+          className="!bg-black !border-accent-green !w-3 !h-3 !border-2 !-left-[6px]"
         />
       ))}
 

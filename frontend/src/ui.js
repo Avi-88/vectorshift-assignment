@@ -147,7 +147,7 @@ export const PipelineUI = () => {
 
     return (
         <ReactFlowProvider>
-            <div ref={reactFlowWrapper} className="w-full h-full bg-dark-bg">
+            <div ref={reactFlowWrapper} className="w-full h-full ">
                 <ReactFlow
                   nodes={nodes}
                   edges={edges}
@@ -164,7 +164,7 @@ export const PipelineUI = () => {
                   connectionLineType='smoothstep'
                   aria-label="Pipeline canvas"
                 >
-                  <Background variant="dots" gap={gridSize} size={1} />
+                  <Background colorMode='dark' variant="dots" gap={gridSize} size={1} />
                   <Controls position="bottom-right" style={{ right: 220, bottom: 0 }}  />
                   <MiniMap 
                       className="!bg-dark-card/50 !border-white/10 !backdrop-blur-md rounded-lg overflow-hidden"
